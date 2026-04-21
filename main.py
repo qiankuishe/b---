@@ -10,6 +10,7 @@ from bilibili_listener import create_listener
 from auto_updater import AutoUpdater
 from config_wizard import show_config_wizard
 from config_path import get_config_path
+from process_manager import kill_existing_process
 
 def load_config():
     with open(get_config_path(), 'r', encoding='utf-8') as f:
@@ -28,6 +29,9 @@ def check_config():
         return False
 
 def main():
+    # 杀掉旧进程
+    kill_existing_process()
+    
     app = QApplication(sys.argv)
     
     # 检查配置，如果不存在则显示配置向导
