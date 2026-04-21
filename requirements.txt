@@ -1,0 +1,5 @@
+bilibili-api-python==16.2.0
+requests==2.31.0
+PyQt5==5.15.10
+packaging==23.2
+pyinstaller==6.3.0
