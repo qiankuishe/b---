@@ -61,6 +61,9 @@ def main():
     admin_window = AdminWindow(queue_manager)
     admin_window.show()
     
+    # 设置日志回调
+    queue_manager.log_callback = admin_window.add_log
+    
     # 启动显示窗口
     config = load_config()
     display_window = TransparentDisplay(queue_manager, config['display_count'])
@@ -73,8 +76,10 @@ def main():
     def start_listener():
         try:
             listener = create_listener()
+            admin_window.add_log('弹幕监听已启动')
             listener.run()
         except Exception as e:
+            admin_window.add_log(f'弹幕监听错误: {e}')
             print(f"弹幕监听错误: {e}")
     
     listener_thread = threading.Thread(target=start_listener, daemon=True)

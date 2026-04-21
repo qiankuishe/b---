@@ -4,9 +4,10 @@ from typing import List, Dict, Optional
 from config_path import get_queue_data_path
 
 class QueueManager:
-    def __init__(self):
+    def __init__(self, log_callback=None):
         self.queue: List[Dict] = []
         self.current_number = 0
+        self.log_callback = log_callback
         
     def add_user(self, uid: int, username: str) -> tuple[bool, str]:
         if any(u['uid'] == uid for u in self.queue):
@@ -20,6 +21,10 @@ class QueueManager:
             'time': datetime.now().strftime('%H:%M:%S')
         })
         position = len(self.queue)
+        
+        if self.log_callback:
+            self.log_callback(f'{username} 加入队列 (第{position}位)')
+        
         return True, f"@{username} 排队成功！你是第{position}位，排队号{self.current_number}"
     
     def remove_user(self, uid: int) -> tuple[bool, str]:
@@ -27,6 +32,10 @@ class QueueManager:
             if user['uid'] == uid:
                 username = user['username']
                 self.queue.pop(i)
+                
+                if self.log_callback:
+                    self.log_callback(f'{username} 取消排队')
+                
                 return True, f"@{username} 已取消排队"
         return False, "你不在队列中"
     

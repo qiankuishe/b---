@@ -34,46 +34,87 @@ class AutoUpdater:
             print(f"检查更新失败: {e}")
             return False, '', ''
     
-    def download_update(self, url: str, filename: str = 'update.zip') -> bool:
+    def download_update(self, url: str, filename: str = 'update.exe', progress_callback=None) -> bool:
         try:
             response = requests.get(url, stream=True, timeout=30)
             if response.status_code != 200:
                 return False
             
+            total_size = int(response.headers.get('content-length', 0))
+            downloaded = 0
+            last_progress = -1
+            timeout_count = 0
+            last_update_time = __import__('time').time()
+            
             with open(filename, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
+                    downloaded += len(chunk)
+                    
+                    if total_size > 0:
+                        progress = int(downloaded * 100 / total_size)
+                        current_time = __import__('time').time()
+                        
+                        # 每10%显示一次
+                        if progress // 10 > last_progress // 10:
+                            if progress_callback:
+                                progress_callback(progress)
+                            last_progress = progress
+                            timeout_count = 0
+                            last_update_time = current_time
+                        
+                        # 超过15秒没进展
+                        elif current_time - last_update_time > 15:
+                            if progress_callback:
+                                progress_callback(last_progress, slow=True)
+                            last_update_time = current_time
+                            timeout_count += 1
+                            
+                            if timeout_count >= 3:
+                                if progress_callback:
+                                    progress_callback(-1, timeout=True)
+                                return False
             
             return True
         except Exception as e:
             print(f"下载更新失败: {e}")
             return False
     
-    def apply_update(self, zip_file: str = 'update.zip') -> bool:
+    def apply_update(self, new_exe: str = 'update.exe') -> bool:
         try:
-            backup_dir = 'backup_old_version'
-            if os.path.exists(backup_dir):
-                shutil.rmtree(backup_dir)
+            import subprocess
             
-            os.makedirs(backup_dir, exist_ok=True)
+            # 获取当前exe路径
+            if getattr(sys, 'frozen', False):
+                current_exe = sys.executable
+            else:
+                current_exe = 'main.py'
             
-            # 备份当前文件
-            for item in os.listdir('.'):
-                if item not in [backup_dir, zip_file, 'config.json', 'queue_data.json']:
-                    src = os.path.join('.', item)
-                    dst = os.path.join(backup_dir, item)
-                    if os.path.isfile(src):
-                        shutil.copy2(src, dst)
-                    elif os.path.isdir(src):
-                        shutil.copytree(src, dst)
+            # 创建更新脚本
+            update_script = f'''
+import time
+import os
+import sys
+import shutil
+
+time.sleep(2)
+
+try:
+    if os.path.exists("{current_exe}"):
+        os.remove("{current_exe}")
+    shutil.move("{new_exe}", "{current_exe}")
+    os.startfile("{current_exe}")
+except Exception as e:
+    print(f"更新失败: {{e}}")
+'''
             
-            # 解压新版本
-            with zipfile.ZipFile(zip_file, 'r') as zip_ref:
-                zip_ref.extractall('.')
+            with open('_update.py', 'w', encoding='utf-8') as f:
+                f.write(update_script)
             
-            os.remove(zip_file)
+            # 启动更新脚本
+            subprocess.Popen([sys.executable, '_update.py'], 
+                           creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0)
             
-            print("更新成功！请重启程序。")
             return True
             
         except Exception as e:
