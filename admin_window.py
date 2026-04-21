@@ -48,6 +48,10 @@ class AdminWindow(QMainWindow):
         self.config_btn.clicked.connect(self.open_config)
         btn_layout.addWidget(self.config_btn)
         
+        self.update_btn = QPushButton('检查更新')
+        self.update_btn.clicked.connect(self.check_update)
+        btn_layout.addWidget(self.update_btn)
+        
         layout.addLayout(btn_layout)
         
         # 定时刷新
@@ -121,3 +125,28 @@ class AdminWindow(QMainWindow):
         from config_wizard import show_config_wizard
         if show_config_wizard():
             QMessageBox.information(self, '提示', '配置已更新，请重启程序生效')
+    
+    def check_update(self):
+        from auto_updater import AutoUpdater
+        try:
+            updater = AutoUpdater()
+            has_update, new_version, download_url = updater.check_update()
+            
+            if has_update:
+                reply = QMessageBox.question(
+                    self, '发现新版本', 
+                    f'当前版本: v{updater.current_version}\n新版本: v{new_version}\n\n是否立即更新？',
+                    QMessageBox.Yes | QMessageBox.No
+                )
+                if reply == QMessageBox.Yes:
+                    QMessageBox.information(self, '提示', '开始下载更新，请稍候...')
+                    if updater.auto_update():
+                        QMessageBox.information(self, '成功', '更新完成！请重启程序。')
+                        import sys
+                        sys.exit(0)
+                    else:
+                        QMessageBox.warning(self, '失败', '更新失败，请手动下载')
+            else:
+                QMessageBox.information(self, '提示', f'当前已是最新版本 v{updater.current_version}')
+        except Exception as e:
+            QMessageBox.warning(self, '错误', f'检查更新失败: {str(e)}')
