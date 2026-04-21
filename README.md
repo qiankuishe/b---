@@ -113,25 +113,26 @@ python -c "from auto_updater import AutoUpdater; AutoUpdater().auto_update()"
 
 ### 自动打包（推荐）
 
-1. 修改 `version.json` 中的版本号（如 1.0.0 → 1.1.0）
+1. 修改 `version.json` 中的版本号（如 1.0.0 → 1.0.1）
 2. 提交代码并打tag：
    ```bash
-   git add .
-   git commit -m "Release v1.1.0"
-   git tag v1.1.0
+   git add version.json
+   git commit -m "Release v1.0.1"
+   git tag v1.0.1
    git push origin main --tags
    ```
-3. GitHub Actions 会自动编译并创建 Release
+3. GitHub Actions 会自动编译 `paiduiji-v1.0.1.exe` 并创建 Release
 4. 用户启动程序时会自动检测并提示更新
+
+**注意**：版本号统一在 `version.json` 中管理，exe 文件名会自动匹配版本号。
 
 ### 手动打包
 
 ```bash
-pip install pyinstaller
-pyinstaller build.spec
+python build_with_version.py
 ```
 
-生成的 exe 在 `dist/` 目录下。
+生成的 exe 在 `dist/` 目录下，文件名自动包含版本号。
 
 ## 注意事项
 

@@ -28,17 +28,23 @@ jobs:
     
     - name: Build with PyInstaller
       run: |
-        pyinstaller build.spec
+        python build_with_version.py
+    
+    - name: Get version
+      id: get_version
+      run: |
+        $version = (Get-Content version.json | ConvertFrom-Json).version
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: dist/paiduiji-v1.0.0.exe
+        files: dist/paiduiji-v${{ steps.get_version.outputs.VERSION }}.exe
         body: |
-          ## B站直播间排队系统 v1.0.0
+          ## B站直播间排队系统 v${{ steps.get_version.outputs.VERSION }}
           
           ### 使用方法
-          1. 下载 paiduiji-v1.0.0.exe
+          1. 下载 paiduiji-v${{ steps.get_version.outputs.VERSION }}.exe
           2. 双击运行
           3. 首次运行会弹出配置向导，填写直播间信息
           4. 配置文件自动保存到 %APPDATA%\BilibiliQueueSystem
