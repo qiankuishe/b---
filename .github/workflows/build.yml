@@ -30,21 +30,21 @@ jobs:
     - name: Create Release Package
       run: |
         mkdir release
-        copy dist\BilibiliQueueSystem.exe release\
+        copy dist\paiduiji-v1.0.0.exe release\
         copy README.md release\
         copy version.json release\
-        Compress-Archive -Path release\* -DestinationPath BilibiliQueueSystem.zip
+        Compress-Archive -Path release\* -DestinationPath paiduiji-v1.0.0.zip
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: BilibiliQueueSystem.zip
+        files: paiduiji-v1.0.0.zip
         body: |
           ## B站直播间排队系统
           
           ### 使用方法
-          1. 下载并解压 BilibiliQueueSystem.zip
-          2. 运行 BilibiliQueueSystem.exe
+          1. 下载并解压 paiduiji-v1.0.0.zip
+          2. 运行 paiduiji-v1.0.0.exe
           3. 首次运行会弹出配置向导，填写直播间信息
           4. 开始使用！
           

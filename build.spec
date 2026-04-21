@@ -35,7 +35,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='BilibiliQueueSystem',
+    name='paiduiji-v1.0.0',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

@@ -14,8 +14,8 @@
 ### 方式一：下载exe（推荐）
 
 1. 前往 [Releases](https://github.com/YOUR_USERNAME/bilibili-queue-system/releases) 页面
-2. 下载最新版本的 `BilibiliQueueSystem.zip`
-3. 解压后运行 `BilibiliQueueSystem.exe`
+2. 下载最新版本的 `paiduiji-v1.0.0.zip`
+3. 解压后运行 `paiduiji-v1.0.0.exe`
 4. 首次运行会弹出配置向导，填写以下信息：
    - 直播间ID
    - B站身份码（SESSDATA、bili_jct、buvid3）
