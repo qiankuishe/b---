@@ -2,6 +2,7 @@ import json
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
+from config_path import get_config_path
 
 class ConfigWizard(QDialog):
     def __init__(self):
@@ -61,9 +62,10 @@ class ConfigWizard(QDialog):
         self.load_existing_config()
     
     def load_existing_config(self):
-        if os.path.exists('config.json'):
+        config_path = get_config_path()
+        if os.path.exists(config_path):
             try:
-                with open('config.json', 'r', encoding='utf-8') as f:
+                with open(config_path, 'r', encoding='utf-8') as f:
                     config = json.load(f)
                     self.room_id.setText(str(config.get('room_id', '')))
                     cred = config.get('credential', {})
@@ -120,7 +122,8 @@ class ConfigWizard(QDialog):
             }
         }
         
-        with open('config.json', 'w', encoding='utf-8') as f:
+        config_path = get_config_path()
+        with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config, f, ensure_ascii=False, indent=2)
         
         QMessageBox.information(self, '成功', '配置已保存！')

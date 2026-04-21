@@ -30,29 +30,23 @@ jobs:
       run: |
         pyinstaller build.spec
     
-    - name: Create Release Package
-      run: |
-        mkdir release
-        copy dist\paiduiji-v1.0.0.exe release\
-        copy README.md release\
-        copy version.json release\
-        Compress-Archive -Path release\* -DestinationPath paiduiji-v1.0.0.zip
-    
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        files: paiduiji-v1.0.0.zip
+        files: dist/paiduiji-v1.0.0.exe
         body: |
-          ## B站直播间排队系统
+          ## B站直播间排队系统 v1.0.0
           
           ### 使用方法
-          1. 下载并解压 paiduiji-v1.0.0.zip
-          2. 运行 paiduiji-v1.0.0.exe
+          1. 下载 paiduiji-v1.0.0.exe
+          2. 双击运行
           3. 首次运行会弹出配置向导，填写直播间信息
-          4. 开始使用！
+          4. 配置文件自动保存到 %APPDATA%\BilibiliQueueSystem
           
-          ### 更新说明
-          - 自动检查更新功能
-          - 支持一键更新到最新版本
+          ### 功能特性
+          - 弹幕排队系统
+          - 管理客户端（叫号、删除、插队）
+          - 半透明显示窗口
+          - 自动检查更新
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

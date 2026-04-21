@@ -9,13 +9,14 @@ from transparent_display import TransparentDisplay
 from bilibili_listener import create_listener
 from auto_updater import AutoUpdater
 from config_wizard import show_config_wizard
+from config_path import get_config_path
 
 def load_config():
-    with open('config.json', 'r', encoding='utf-8') as f:
+    with open(get_config_path(), 'r', encoding='utf-8') as f:
         return json.load(f)
 
 def check_config():
-    if not os.path.exists('config.json'):
+    if not os.path.exists(get_config_path()):
         return False
     
     try:

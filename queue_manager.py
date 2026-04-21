@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from typing import List, Dict, Optional
+from config_path import get_queue_data_path
 
 class QueueManager:
     def __init__(self):
@@ -58,14 +59,18 @@ class QueueManager:
     def clear(self):
         self.queue.clear()
     
-    def save(self, filename='queue_data.json'):
+    def save(self, filename=None):
+        if filename is None:
+            filename = get_queue_data_path()
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump({
                 'queue': self.queue,
                 'current_number': self.current_number
             }, f, ensure_ascii=False, indent=2)
     
-    def load(self, filename='queue_data.json'):
+    def load(self, filename=None):
+        if filename is None:
+            filename = get_queue_data_path()
         try:
             with open(filename, 'r', encoding='utf-8') as f:
                 data = json.load(f)

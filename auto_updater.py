@@ -5,10 +5,11 @@ import sys
 import zipfile
 import shutil
 from packaging import version
+from config_path import get_version_path
 
 class AutoUpdater:
     def __init__(self):
-        with open('version.json', 'r', encoding='utf-8') as f:
+        with open(get_version_path(), 'r', encoding='utf-8') as f:
             data = json.load(f)
             self.current_version = data['version']
             self.repo = data['github_repo']
