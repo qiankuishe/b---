@@ -1,4 +1,8 @@
-# -*- mode: python ; coding: utf-8 -*-
+import os
+from PyInstaller.utils.hooks import collect_data_files
+
+# 收集 bilibili_api 的数据文件
+bilibili_datas = collect_data_files('bilibili_api')
 
 block_cipher = None
 
@@ -6,7 +10,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('version.json', '.')],
+    datas=[('version.json', '.')] + bilibili_datas,
     hiddenimports=[
         'bilibili_api',
         'bilibili_api.live',
